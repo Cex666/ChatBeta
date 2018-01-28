@@ -103,12 +103,14 @@ public class Server {
 	
 	//rimuove un elemento dall'arrayList in base al nome utente
 	public void rimuoviElemento(String nomeUtente) {
-		for (int i = 0; i<=indiceUltimoElemento; i++) {
-			if (nomeUtente.equals(listaThread.get(i).getNomeUtente())) {
-				listaThread.remove(i);
+		if (connessi()) {
+			for (int i = 0; i<=indiceUltimoElemento; i++) {
+				if (nomeUtente.equals(listaThread.get(i).getNomeUtente())) {
+					listaThread.remove(i);
+				}
 			}
+			indiceUltimoElemento--;
 		}
-		indiceUltimoElemento--;
 	}
 	
 	public void chiudiTutti() {

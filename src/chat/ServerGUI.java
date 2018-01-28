@@ -1,13 +1,13 @@
 package chat;
 
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.awt.event.WindowAdapter;
 
-public class ServerGUI implements WindowListener {
+public class ServerGUI  {
 
 	private JFrame jFServer;
 
@@ -19,6 +19,7 @@ public class ServerGUI implements WindowListener {
 	
 	public ServerGUI() {
 		initialize();
+		jFServer.setVisible(true);
 		server.avvio();
 	}
 
@@ -26,18 +27,32 @@ public class ServerGUI implements WindowListener {
 	//metodo inizializzatore
 	private void initialize() {
 		jFServer = new JFrame();
-		jFServer.setVisible(true);
+		jFServer.setResizable(false);
+		jFServer.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if (server.connessi()) {
+					server.inviaTutti("#!--- close ---!#");
+					server.chiudiTutti();	
+				}
+				
+				jFServer.dispose();
+				System.exit(0);
+			}
+		});
 		jFServer.setTitle("Server");
 		jFServer.setBounds(100, 100, 305, 473);
 		jFServer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jFServer.getContentPane().setLayout(null);
-		jFServer.addWindowListener(this);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 38, 269, 386);
 		jFServer.getContentPane().add(scrollPane);
 		
 		tAChat = new JTextArea();
+		tAChat.setLineWrap(true);
+		tAChat.setWrapStyleWord(true);
+		tAChat.setEditable(false);
 		scrollPane.setViewportView(tAChat);
 	}
 	
@@ -49,28 +64,9 @@ public class ServerGUI implements WindowListener {
 		JOptionPane.showMessageDialog(null, msg, "Errore!", 0);
 	}
 	
-	//metodo per la chiusura della finestra
-	public void windowClosing(WindowEvent e) {
-		
-		if (server.connessi()) {
-			server.inviaTutti("#!--- close ---!#");
-			server.chiudiTutti();	
-		}
-		
-		jFServer.dispose();
-		System.exit(0);
-	}
-		
-		/* metodi per l'implements di windowListener (altrimenti continua a dare errore, ma siccome
-		*  non servono restano vuoti) */
-		public void windowIconified(WindowEvent e) {}
-		public void windowDeactivated(WindowEvent e) {}
-		public void windowClosed(WindowEvent e) {}
-		public void windowActivated(WindowEvent e) {}
-		public void windowDeiconified(WindowEvent e) {}
-		public void windowOpened(WindowEvent e) {}
 	
 	public static void main(String[] args) {
 		new ServerGUI();
 	}
+	
 }

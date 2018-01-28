@@ -32,6 +32,7 @@ public class Client extends Thread {
 			ClientGUI.errore("*** Problema nel connettersi al server ***");
 			connesso = false;
 			ClientGUI.visibile();
+			ClientGUI.cambiaConnesso();
 		}
 	}
 	
@@ -52,6 +53,11 @@ public class Client extends Thread {
 	}
 	
 	public void send(String msg) {
+		if(out == null) {
+			ClientGUI.errore("*** Client non connesso ***");
+			return;
+		}
+			
 		try {
 			out.writeUTF(msg);
 		} catch(IOException e) {
@@ -104,15 +110,18 @@ public class Client extends Thread {
 	}
 	
 	public void chiudi() {
-		try {
+		if (connesso()) {
+			try {
 			
-			socket.close();
-			in.close();
-			out.close();
+				socket.close();
+				in.close();
+				out.close();
 			
-			chiudi = true;
-		} catch (IOException e) {
-			ClientGUI.errore("*** Errore nel chiudere la connessione ***");
+				chiudi = true;
+				ClientGUI.cambiaConnesso();
+			} catch (IOException e) {
+				ClientGUI.errore("*** Errore nel chiudere la connessione ***");
+			}
 		}
 	}
 	
